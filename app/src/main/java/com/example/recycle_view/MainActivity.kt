@@ -3,27 +3,84 @@ package com.example.recycle_view
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
-import android.os.Handler
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toolbar
+import androidx.appcompat.app.ActionBar
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.appbar.AppBarLayout
 
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var rvHeroes: RecyclerView;
-    private var list:ArrayList<Hero> = arrayListOf()
-
+    private lateinit var rvHeroes: RecyclerView
+    private var list: ArrayList<Hero> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-            rvHeroes = findViewById(R.id.rv_hero)
-            rvHeroes.setHasFixedSize(true)
 
-            list.addAll(HeroesData.listData)
-            showrecycle()
+        rvHeroes = findViewById(R.id.rv_hero)
+        rvHeroes.setHasFixedSize(true)
+
+        list.addAll(HeroesData.listData)
+        showRecyclerList()
+        setActionBarTitle("Mode CardView")
     }
-    private fun showrecycle(){
+
+    private fun showRecyclerList() {
         rvHeroes.layoutManager = LinearLayoutManager(this)
-        val listHeroAdapter =  ListHeroAdapter(list)
+        val listHeroAdapter = ListHeroAdapter(list)
         rvHeroes.adapter = listHeroAdapter
+    }
+    private fun  showRecycleGrid(){
+        rvHeroes.layoutManager = GridLayoutManager(this,2)
+        val gridHeroAdapter = gridHeroAdapter(list)
+        rvHeroes.adapter = gridHeroAdapter
+    }
+
+    private fun showRecycleCardView() {
+        rvHeroes.layoutManager = LinearLayoutManager(this)
+        val cardViewHeroAdapter = CardViewHeroAdapter(list)
+        rvHeroes.adapter = cardViewHeroAdapter
+
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        setMode(item.itemId)
+        return super.onOptionsItemSelected(item)
+    }
+    private fun setActionBarTitle(title: String) {
+        if (supportActionBar != null) {
+            (supportActionBar as ActionBar).title = title
+        }
+
+    }
+    private var title: String = "Mode List"
+
+
+
+    private fun setMode(selectedMode: Int) {
+        when (selectedMode) {
+            R.id.action_list -> {
+                showRecyclerList()
+            }
+
+            R.id.action_grid -> {
+                showRecycleGrid()
+            }
+
+            R.id.action_cardview -> {
+                title = "Mode  CardView"
+            showRecycleCardView()
+
+            }
+        }
     }
 }
